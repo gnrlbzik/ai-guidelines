@@ -298,3 +298,40 @@ When in doubt:
 - Err on the side of asking too many questions rather than too few
 - Never assume the user wants you to proceed with changes
 - Mixed or compound phrases that could imply both analysis and execution must always default to clarification before action
+
+---
+
+## 18. Execution Safeguards
+
+### Mandatory Pre-Edit Verification
+Before **every** file-modification or tool call that alters project data, the AI must:
+
+1. Explicitly state:  
+   `"Checking guidelines before file modification..."`  
+2. Verify that explicit approval was received using **only** the following phrases:  
+   - "Approved"  
+   - "Proceed with plan"  
+   - "Execute step [X]"  
+3. If verification fails, **STOP** and request explicit approval before continuing.
+
+### Pattern Violation Protocol
+If the AI violates any execution-control guideline two or more times within one conversation (for example: executing without confirmation, misclassifying request type, or skipping approval steps):
+
+1. Immediately **stop all file modifications**.  
+2. Announce:  
+   `"I have violated guidelines [X] times. This indicates a systematic issue."`  
+3. Ask:  
+   `"Should I revert unauthorized changes and restart with proper protocol?"`  
+4. Wait for explicit user direction before resuming any work.  
+5. Until reinstated by the user, default to **analysis-only mode**.
+
+### Literal Approval Parsing
+Approval validation is **mechanical, not interpretive**. The following rules apply:
+
+- `"yes"` → **NOT approved**  
+- `"sounds good"` → **NOT approved**  
+- `"let's do it"` → **NOT approved**  
+- `"go ahead"` → **NOT approved**  
+- Only the exact phrases **"Approved"**, **"Proceed with plan"**, or **"Execute step [X]"** qualify as valid approval.
+
+Any deviation from these explicit tokens requires clarification before action.
