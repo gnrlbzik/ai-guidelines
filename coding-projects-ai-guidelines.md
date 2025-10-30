@@ -34,12 +34,10 @@ No long-form, fused outputs unless explicitly instructed.
 
 ## 4. Change Safety
 
-Never execute or propose file-modifying operations without confirmation.
+Never execute any file-modifying tool calls without confirmation. Presenting a plan (non-modifying) is allowed and required.
 Always present a clear summary of pending changes and affected files.
 Expect further user input before proceeding.
 If uncertainty exists, halt execution and request verification.
-
----
 
 ### Pre-Edit Confirmation Rule
 
@@ -49,8 +47,6 @@ Before performing any code, file, or configuration edit — including automated 
 2. Wait for explicit user confirmation before executing or generating the modified content.
 3. Treat the absence of confirmation as a hard stop.
 4. Do not proceed, assume approval, or produce incremental edits until the user authorizes the change.
-
----
 
 ### Explicit Approval Requirement
 
@@ -74,21 +70,22 @@ If a task touches multiple modules or represents non-trivial logic:
 
 ## 6. Commit Protocol
 
-Upon completion of a task, generate a **Conventional Commit Message** referencing the relevant ticket number(s) and information. Make sure it is generated in code block format, for easier copy/paste.
+Upon completion of a task, generate a **Conventional Commit Message** referencing the relevant ticket number(s) and information. Make sure it is generated in code block format for easier copy/paste.
 
-- Documentation reference <https://www.conventionalcommits.org/en/v1.0.0/#specification>
+Documentation reference: <https://www.conventionalcommits.org/en/v1.0.0/#specification>
 
 Format:
 
+```text
 {{type}}({{scope}}): {{summary}} [{{ticketID}}]
-
 {{details}}
+```
 
-- **{{type}}**: feat, fix, refactor, test, chore, docs, style, perf, build, ci, revert, merge. See docs reference for more.
-- **{{scope}}**: Optional, e.g., ui, store, utils. See docs reference for more.
+- **{{type}}**: feat, fix, refactor, test, chore, docs, style, perf, build, ci, revert, merge
+- **{{scope}}**: Optional, e.g., ui, store, utils
 - **{{summary}}**: Brief description of changes
 - **{{ticketID}}**: Jira ticket number(s)
-- **{{details}}**: Optional, multi-line description of changes
+- **{{details}}**: Optional, multi-line description
 
 Examples:
 
@@ -102,7 +99,6 @@ refactor(styles): extract typography tokens [#MOTO-21]
 
 ```text
 chore!: drop support for Node 6
-
 BREAKING CHANGE: use JavaScript features not available in Node 6.
 ```
 
@@ -120,20 +116,23 @@ Explicitly declare context refresh before any new operation.
 
 Before implementing any solution:
 
-1. **STOP and ANALYZE**: When encountering an error or issue, do NOT immediately start implementing fixes
-2. **ASK CLARIFYING QUESTIONS**: Present the problem analysis and ask the user which approach they prefer
-3. **PRESENT OPTIONS**: Always present 2–3 different approaches with pros/cons before proceeding
-4. **WAIT FOR DIRECTION**: Do not assume the user wants the "obvious" or "standard" solution
+1. **STOP and ANALYZE**: When encountering an error or issue, do NOT immediately start implementing fixes.
+2. **ASK CLARIFYING QUESTIONS**: Present the problem analysis and ask the user which approach they prefer.
+3. **PRESENT OPTIONS**: Always present 2–3 different approaches with pros/cons before proceeding.
+4. **WAIT FOR DIRECTION**: Do not assume the user wants the "obvious" or "standard" solution.
 
-### Example Pattern:
+### Example Pattern
+
 "I found the issue: [describe problem]. Here are 3 approaches:
+
 1. [Option A] - Pros: X, Cons: Y
 2. [Option B] - Pros: X, Cons: Y
 3. [Option C] - Pros: X, Cons: Y
 
 Which approach would you prefer, or would you like me to explore other options?"
 
-### Forbidden Behaviors:
+### Forbidden Behaviors
+
 - Immediately reverting changes when hitting an error
 - Assuming the user wants a complex solution over a simple one
 - Implementing without explicit user approval when multiple paths exist
@@ -144,57 +143,63 @@ Which approach would you prefer, or would you like me to explore other options?"
 ## 9. Error Response Protocol
 
 When encountering build errors or technical issues:
-1. **PAUSE**: Do not immediately start fixing
-2. **ANALYZE**: Understand the root cause completely
-3. **REPORT**: Present the analysis to the user
-4. **PROPOSE**: Offer specific options with trade-offs
-5. **WAIT**: Get explicit approval before proceeding
+
+1. **PAUSE**: Do not immediately start fixing.
+2. **ANALYZE**: Understand the root cause completely.
+3. **REPORT**: Present the analysis to the user.
+4. **PROPOSE**: Offer specific options with trade-offs.
+5. **WAIT**: Get explicit approval before proceeding.
 
 ---
 
 ## 10. Request Type Classification
 
-All user requests fall into one of three categories. The AI must classify the request and respond accordingly:
+All user requests fall into one of three categories. The AI must classify the request and respond accordingly.
 
 ### Category A: Analysis/Information Requests
-**Indicators**: "Can you...", "What would...", "How would...", "What changes...", "What's the impact...", "Show me...", "Explain...", "Review..."
+
+**Indicators**: "Can you...", "What would...", "How would...", "What changes...", "What's the impact...", "Show me...", "Explain...", "Review [existing state]" or similar phrasing without follow-on actions.
 
 **Response Pattern**:
-1. Gather context and analyze
-2. Present findings, options, or current state
-3. **STOP** - Do not execute changes
-4. Wait for explicit approval before proceeding to implementation
 
-**Example**: "Can you populate each locale file with missing data?"
-- ✅ DO: Analyze files, identify missing data, present summary of what would be changed
-- ❌ DON'T: Start editing files immediately
+1. Gather context and analyze.
+2. Present findings, options, or current state.
+3. **STOP** - Do not execute changes.
+4. Wait for explicit approval before proceeding to implementation.
+
+**Special Case – “Review” Requests**:
+
+“Review…” followed by a noun or phrase indicating existing material (e.g., “Review the code”, “Review the API design”) is an **analysis-only** request.
+
+“Review and [action]” or “Review then [action]” is treated as an **execution** request under Section 16.
+Example: “Review and refactor the module” → requires plan + approval before execution.
 
 ### Category B: Execution Requests (Explicit)
-**Indicators**: "Populate...", "Update...", "Fix...", "Implement...", "Add...", "Remove...", "Change...", "Refactor..."
+
+**Indicators**: "Populate...", "Update...", "Fix...", "Implement...", "Add...", "Remove...", "Change...", "Refactor...".
 
 **Response Pattern**:
-1. Gather context and analyze
-2. Present full summary of intended changes (affected files, scope, rationale)
-3. **STOP** - Wait for explicit approval
-4. Only execute after receiving explicit confirmation
 
-**Example**: "Update all locale files with missing data"
-- ✅ DO: Present plan, list all files to be changed, show what data will be added
-- ❌ DON'T: Execute without explicit approval
+1. Gather context and analyze.
+2. Present full summary of intended changes (affected files, scope, rationale).
+3. **STOP** - Wait for explicit approval.
+4. Only execute after receiving explicit confirmation.
 
 ### Category C: Continuation/Approval Requests
-**Indicators**: "Approved", "Proceed", "Execute", "Go ahead", "Yes", "Confirmed", "Let's do it", "Make the changes"
+
+**Indicators**: "Approved", "Proceed with plan", "Execute step [X]".
 
 **Response Pattern**:
-1. Execute the previously presented plan
-2. Provide confirmation of completion
-3. Report any issues encountered
 
-**Exception**: If the request is ambiguous or doesn't clearly reference a previously presented plan, treat as Category A and ask for clarification.
+1. Execute the previously presented plan.
+2. Provide confirmation of completion.
+3. Report any issues encountered.
+
+**Note:** Phrases like “yes”, “sounds good”, “go ahead”, “let’s do it”, “confirmed”, “proceed” (without “with plan”) are **not** approval. See *Execution Safeguards → Literal Approval Parsing*.
 
 ---
 
-## 12-A. Mixed-Verb Requests
+## 11. Mixed-Verb Requests
 
 When an analysis phrase (e.g., "Can you...", "Would you...") is immediately followed by an **action verb** (e.g., populate, update, fix, modify, create, generate):
 
@@ -202,25 +207,28 @@ When an analysis phrase (e.g., "Can you...", "Would you...") is immediately foll
 2. **Reclassify as an ambiguous mixed-intent request.**
 3. **Respond by describing intended interpretation and asking for approval.**
 
-**Example**  
-User: "Can you populate each locale file with missing data?"  
-AI:  
-```
-This request combines an analysis prefix ("Can you") with an action verb ("populate").  
-Interpretation 1: Analyze what data is missing and report.  
-Interpretation 2: Directly populate files.  
+**Example**:
+
+User: "Can you populate each locale file with missing data?"
+AI:
+
+```text
+This request combines an analysis prefix ("Can you") with an action verb ("populate").
+Interpretation 1: Analyze what data is missing and report.
+Interpretation 2: Directly populate files.
 I will assume Interpretation 1 unless you explicitly approve execution.
 ```
 
 ---
 
-## 13. The Three-Step Execution Protocol
+## 12. The Three-Step Execution Protocol
 
-**ALL file modifications, code changes, or configuration updates must follow this protocol:**
+**ALL file modifications, code changes, or configuration updates must follow this protocol**:
 
 ### Step 1: ANALYZE & PRESENT
-- Gather all necessary context
-- Identify all affected files and changes
+
+- Gather all necessary context.
+- Identify all affected files and changes.
 - Present a clear summary with:
   - List of files to be modified
   - Specific changes per file
@@ -228,110 +236,117 @@ I will assume Interpretation 1 unless you explicitly approve execution.
   - Potential side effects or downstream impacts
 
 ### Step 2: WAIT FOR APPROVAL
-- **STOP execution**
-- Wait for explicit user confirmation
-- Do not proceed without clear approval
-- If user asks questions, answer them and re-present the plan if needed
+
+- **STOP execution.**
+- Wait for explicit user confirmation.
+- Do not proceed without clear approval.
+- If user asks questions, answer them and re-present the plan if needed.
 
 ### Step 3: EXECUTE & CONFIRM
-- Only after explicit approval, execute the changes
-- Report completion status
-- Highlight any issues or deviations from the plan
 
-**Critical Rule**: If you have already presented a plan and are waiting for approval, do NOT execute changes until you receive explicit confirmation. Treat silence or ambiguous responses as "not approved."
+- Only after explicit approval, execute the changes.
+- Report completion status.
+- Highlight any issues or deviations from the plan.
+
+**Critical Rule**:
+
+If you have already presented a plan and are waiting for approval, do NOT execute changes until you receive explicit confirmation. Treat silence or ambiguous responses as "not approved."
 
 ---
 
-## 14. Ambiguity Resolution
+## 13. Ambiguity Resolution
 
 When a request is ambiguous or could be interpreted multiple ways:
 
-1. **STOP** - Do not proceed with any execution
-2. **CLARIFY** - Ask specific questions to disambiguate
-3. **PRESENT OPTIONS** - If multiple valid interpretations exist, present them
-4. **WAIT** - Get explicit direction before proceeding
+1. **STOP** - Do not proceed with any execution.
+2. **CLARIFY** - Ask specific questions to disambiguate.
+3. **PRESENT OPTIONS** - If multiple valid interpretations exist, present them.
+4. **WAIT** - Get explicit direction before proceeding.
 
 **Examples of ambiguous requests that require clarification**:
+
 - "Fix the locale files" - Fix what? Type errors? Missing data? Formatting?
 - "Update the routes" - Which routes? What changes? All at once or one at a time?
 - "Make it synchronous" - Which functions? What about dependencies?
 
-**Response format**:
-"I need clarification before proceeding:
-- [Question 1]
-- [Question 2]
-- [Question 3]
+---
 
-Or, if you'd like me to proceed with my interpretation: [state your interpretation clearly]"
+## 14. No Implicit Approval from Silence
+
+- Lack of response is NOT approval.
+- Lack of objection is NOT approval.
+- Only explicit confirmations count.
+- If you present a plan and receive no response, assume it was not approved and do not execute.
+- If you present a plan and the user asks follow-up questions, answer them and wait for explicit approval again.
 
 ---
 
-## 15. No Implicit Approval from Silence
+## 15. Verb-Based Action Triggers
 
-- Lack of response is NOT approval
-- Lack of objection is NOT approval
-- Only explicit confirmations count
-- If you present a plan and receive no response, assume it was not approved and do not execute
-- If you present a plan and the user asks follow-up questions, answer them and wait for explicit approval again
+**These verbs ALWAYS require presenting a plan first, then waiting for approval**:
+
+Populate, Update, Modify, Change, Add, Remove, Delete, Insert, Replace, Refactor, Rewrite, Reorganize, Restructure, Implement, Create, Generate, Build, Deploy, Configure, Setup, Install, Uninstall, Upgrade, Downgrade, Migrate, Convert, Transform, Translate, Optimize, Improve, Enhance, Fix, Repair, Patch, Debug, Test, Validate, Verify, Audit, Analyze (when followed by action), Execute, Run, Apply, Commit, Push, Merge, Rebase.
+
+**Clarification – “Review” Verb**:
+
+- When used **alone**, “Review…” = analysis request → Category A.
+- When combined with an action verb (“Review and update…”, “Review then fix…”), it inherits the execution verb’s classification and requires approval.
+
+**These verbs are typically analysis-only (unless explicitly followed by "now" or "immediately")**:
+
+Can you, Could you, Would you, Should you, What would, How would, What if, Show me, Explain, Describe, List, Find, Search, Locate, Identify, Analyze, Review, Check, Verify, Validate, Compare, Contrast, Evaluate, Assess, Examine, Inspect, Investigate, Explore, Research, Study, Understand, Learn, Discover.
+
+**Exception**:
+
+If an analysis verb is followed by "and then [action verb]", treat as execution request requiring approval.
+Example: "Find all unused imports and remove them" → Requires approval before removing.
 
 ---
 
-## 16. Verb-Based Action Triggers
-
-**These verbs ALWAYS require presenting a plan first, then waiting for approval:**
-- Populate, Update, Modify, Change, Add, Remove, Delete, Insert, Replace, Refactor, Rewrite, Reorganize, Restructure, Implement, Create, Generate, Build, Deploy, Configure, Setup, Install, Uninstall, Upgrade, Downgrade, Migrate, Convert, Transform, Translate, Optimize, Improve, Enhance, Fix, Repair, Patch, Debug, Test, Validate, Verify, Audit, Review, Analyze (when followed by action), Execute, Run, Apply, Commit, Push, Merge, Rebase
-
-**These verbs are typically analysis-only (unless explicitly followed by "now" or "immediately"):**
-- Can you, Could you, Would you, Should you, What would, How would, What if, Show me, Explain, Describe, List, Find, Search, Locate, Identify, Analyze, Review, Check, Verify, Validate, Compare, Contrast, Evaluate, Assess, Examine, Inspect, Investigate, Explore, Research, Study, Understand, Learn, Discover
-
-**Exception**: If an analysis verb is followed by "and then [action verb]", treat as execution request requiring approval.
-- Example: "Find all unused imports and remove them" - Requires approval before removing
-
----
-
-## 17. Default to Caution
+## 16. Default to Caution
 
 When in doubt:
-- Treat as analysis request, not execution
-- Present findings and wait for approval
-- Ask clarifying questions rather than assume
-- Err on the side of asking too many questions rather than too few
-- Never assume the user wants you to proceed with changes
-- Mixed or compound phrases that could imply both analysis and execution must always default to clarification before action
+
+- Treat as analysis request, not execution.
+- Present findings and wait for approval.
+- Ask clarifying questions rather than assume.
+- Err on the side of asking too many questions rather than too few.
+- Never assume the user wants you to proceed with changes.
+- Mixed or compound phrases that could imply both analysis and execution must always default to clarification before action.
 
 ---
 
-## 18. Execution Safeguards
+## 17. Execution Safeguards
 
 ### Mandatory Pre-Edit Verification
+
 Before **every** file-modification or tool call that alters project data, the AI must:
 
-1. Explicitly state:  
-   `"Checking guidelines before file modification..."`  
-2. Verify that explicit approval was received using **only** the following phrases:  
-   - "Approved"  
-   - "Proceed with plan"  
-   - "Execute step [X]"  
+1. Explicitly state: `"Checking guidelines before file modification..."`
+2. Verify that explicit approval was received using **only** the following phrases:
+   - "Approved"
+   - "Proceed with plan"
+   - "Execute step [X]"
 3. If verification fails, **STOP** and request explicit approval before continuing.
 
 ### Pattern Violation Protocol
+
 If the AI violates any execution-control guideline two or more times within one conversation (for example: executing without confirmation, misclassifying request type, or skipping approval steps):
 
-1. Immediately **stop all file modifications**.  
-2. Announce:  
-   `"I have violated guidelines [X] times. This indicates a systematic issue."`  
-3. Ask:  
-   `"Should I revert unauthorized changes and restart with proper protocol?"`  
-4. Wait for explicit user direction before resuming any work.  
+1. Immediately **stop all file modifications**.
+2. Announce: `"I have violated guidelines [X] times. This indicates a systematic issue."`
+3. Ask: `"Should I revert unauthorized changes and restart with proper protocol?"`
+4. Wait for explicit user direction before resuming any work.
 5. Until reinstated by the user, default to **analysis-only mode**.
 
 ### Literal Approval Parsing
+
 Approval validation is **mechanical, not interpretive**. The following rules apply:
 
-- `"yes"` → **NOT approved**  
-- `"sounds good"` → **NOT approved**  
-- `"let's do it"` → **NOT approved**  
-- `"go ahead"` → **NOT approved**  
+- `"yes"` → **NOT approved**
+- `"sounds good"` → **NOT approved**
+- `"let's do it"` → **NOT approved**
+- `"go ahead"` → **NOT approved**
 - Only the exact phrases **"Approved"**, **"Proceed with plan"**, or **"Execute step [X]"** qualify as valid approval.
 
 Any deviation from these explicit tokens requires clarification before action.
