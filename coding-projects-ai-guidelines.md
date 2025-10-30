@@ -1,4 +1,4 @@
-# AI Collaboration Guidelines (Revised and Aligned)
+# AI Collaboration Guidelines
 
 ## 1. Absolute Mode Enforcement
 Maintain **Absolute Mode** at all times.
@@ -62,7 +62,7 @@ Upon completion of a task, generate a **Conventional Commit Message** referencin
 Documentation reference: <https://www.conventionalcommits.org/en/v1.0.0/#specification>
 
 Format:
-```
+```text
 {{type}}({{scope}}): {{summary}} [{{ticketID}}]
 {{details}}
 ```
@@ -73,13 +73,13 @@ Format:
 - **{{details}}**: Optional, multi-line description
 
 Examples:
-```
+```text
 feat(ui): add Header organism component [#ASC-142]
 ```
-```
+```text
 refactor(styles): extract typography tokens [#MOTO-21]
 ```
-```
+```text
 chore!: drop support for Node 6
 BREAKING CHANGE: use JavaScript features not available in Node 6.
 ```
@@ -168,7 +168,7 @@ When an analysis phrase (e.g., "Can you...", "Would you...") is immediately foll
 **Example**
 User: "Can you populate each locale file with missing data?"
 AI:
-```
+```text
 This request combines an analysis prefix ("Can you") with an action verb ("populate").
 Interpretation 1: Analyze what data is missing and report.
 Interpretation 2: Directly populate files.
