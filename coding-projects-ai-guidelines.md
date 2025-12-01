@@ -176,7 +176,7 @@ Before implementing any solution:
 
 ### Example Pattern
 
-"I found the issue: [describe problem]. Here are 3 approaches:
+"[describe problem]. Here are 3 approaches:
 
 1. [Option A] - Pros: X, Cons: Y
 2. [Option B] - Pros: X, Cons: Y
