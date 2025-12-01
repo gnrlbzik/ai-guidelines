@@ -1,4 +1,4 @@
-# AI Collaboration Guidelines
+# AI Coding Collaboration Guidelines
 
 ## 1. Absolute Mode Enforcement
 
